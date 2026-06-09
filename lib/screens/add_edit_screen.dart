@@ -78,11 +78,12 @@ class _AddEditScreenState extends ConsumerState<AddEditScreen> {
       );
     }
 
+    if (!mounted) return;
     setState(() => _isLoading = false);
 
-    if (success && mounted) {
+    if (success) {
       context.pop();
-    } else if (mounted) {
+    } else {
       setState(() => _errorMessage = 'Failed to save alarm. Please try again.');
     }
   }
@@ -130,9 +131,9 @@ class _AddEditScreenState extends ConsumerState<AddEditScreen> {
               margin: const EdgeInsets.only(bottom: 16),
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: colorScheme.error.withOpacity(0.1),
+                color: colorScheme.error.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: colorScheme.error.withOpacity(0.3)),
+                border: Border.all(color: colorScheme.error.withValues(alpha: 0.3)),
               ),
               child: Text(
                 _errorMessage!,
@@ -159,7 +160,7 @@ class _AddEditScreenState extends ConsumerState<AddEditScreen> {
               'Tap to change time',
               style: TextStyle(
                 fontSize: 12,
-                color: colorScheme.onBackground.withOpacity(0.4),
+                color: colorScheme.onSurface.withValues(alpha: 0.4),
               ),
             ),
           ),
@@ -188,13 +189,17 @@ class _AddEditScreenState extends ConsumerState<AddEditScreen> {
           // ── Sound ─────────────────────────────────────────────────────────
           Text('Alarm Sound', style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 10),
-          ...AppConstants.alarmSounds.entries.map(
-                (e) => RadioListTile<String>(
-              title: Text(e.key),
-              value: e.value,
-              groupValue: _selectedSound,
-              activeColor: colorScheme.primary,
-              onChanged: (val) => setState(() => _selectedSound = val!),
+          RadioGroup<String>(
+            groupValue: _selectedSound,
+            onChanged: (val) => setState(() => _selectedSound = val!),
+            child: Column(
+              children: AppConstants.alarmSounds.entries.map(
+                    (e) => RadioListTile<String>(
+                  title: Text(e.key),
+                  value: e.value,
+                  activeColor: colorScheme.primary,
+                ),
+              ).toList(),
             ),
           ),
           const SizedBox(height: 24),
@@ -203,7 +208,7 @@ class _AddEditScreenState extends ConsumerState<AddEditScreen> {
           Text('Snooze Duration', style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 10),
           DropdownButtonFormField<int>(
-            value: _snoozeDuration,
+            initialValue: _snoozeDuration,
             decoration: const InputDecoration(
               prefixIcon: Icon(Icons.snooze),
             ),
@@ -224,7 +229,8 @@ class _AddEditScreenState extends ConsumerState<AddEditScreen> {
                 await ref
                     .read(alarmProvider.notifier)
                     .deleteAlarm(widget.existing!.id);
-                if (mounted) context.pop();
+                if (!context.mounted) return;
+                context.pop();
               },
               icon: const Icon(Icons.delete_outline, color: Colors.red),
               label: const Text('Delete Alarm',

@@ -9,10 +9,10 @@ class AppConstants {
   // ── Alarm sounds — all 4 real filenames ──────────────────────────────────
 
   static const Map<String, String> alarmSounds = {
-    'Classic':       'assets/sounds/mixkit-classic-alarm-995.mp3',
-    'Digital Buzz':  'assets/sounds/mixkit-digital-clock-digital-alarm-buzzer-992.mp3',
-    'Morning Clock': 'assets/sounds/mixkit-morning-clock-alarm-1003.mp3',
-    'Rooster':       'assets/sounds/mixkit-rooster-crowing-in-the-morning-2462.mp3',
+    'Classic':       'assets/sounds/classic_alarm.mp3',
+    'Digital Buzz':  'assets/sounds/digital_clock_alarm_buzzer.mp3',
+    'Morning Clock': 'assets/sounds/morning_clock_alarm.mp3',
+    'Rooster':       'assets/sounds/rooster_crowing_in_the_morning.mp3',
   };
 
   // ── Snooze options (minutes) ──────────────────────────────────────────────

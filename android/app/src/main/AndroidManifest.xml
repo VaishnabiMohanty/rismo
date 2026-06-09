@@ -5,6 +5,8 @@
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <!-- ── Battery optimization — CRITICAL for Samsung ──────────────────── -->
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
@@ -58,14 +60,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
-        <!-- ── Alarm manager init provider — CRITICAL missing piece ─────── -->
-        <!-- Initializes AndroidAlarmManager when app starts -->
-        <provider
-            android:name="dev.fluttercommunity.plus.androidalarmmanager.AlarmManagerInitProvider"
-            android:authorities="${applicationId}.alarmmanagerinitprovider"
-            android:exported="false"
-            android:initOrder="100" />
 
         <!-- ── Alarm receivers ────────────────────────────────────────────── -->
         <receiver

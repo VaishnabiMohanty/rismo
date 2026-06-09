@@ -24,8 +24,10 @@ class NotificationService {
       settings: initSettings,
       onDidReceiveNotificationResponse: _onNotificationTapped,
     );
+  }
 
-    // Request notification permission (Android 13+)
+  /// Request notification permission (Android 13+)
+  static Future<void> requestPermission() async {
     await _plugin
         .resolvePlatformSpecificImplementation<
         AndroidFlutterLocalNotificationsPlugin>()
@@ -45,14 +47,18 @@ class NotificationService {
       importance: Importance.max,
       priority: Priority.high,
       fullScreenIntent: true, // shows even on lock screen
-      sound: RawResourceAndroidNotificationSound(
-        alarm.soundPath
-            .replaceAll('assets/sounds/', '')
-            .replaceAll('.mp3', '')
-            .replaceAll('-', '_'),
-      ),
+      sound: RawResourceAndroidNotificationSound(_getRawResourceName(alarm.soundPath)),
       playSound: true,
     );
+  }
+
+  static String _getRawResourceName(String assetPath) {
+    if (assetPath.contains('classic')) return 'mixkit_classic_alarm_995';
+    if (assetPath.contains('digital')) return 'mixkit_digital_alarm_buzzer_992';
+    if (assetPath.contains('morning')) return 'mixkit_morning_clock_alarm_1003';
+    if (assetPath.contains('rooster')) return 'mixkit_rooster_crowing_morning_2462';
+    return 'mixkit_classic_alarm_995'; // default
+  }
 
     await _plugin.zonedSchedule(
       id: alarm.id.hashCode,

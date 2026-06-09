@@ -102,7 +102,7 @@ class _MascotPopupState extends ConsumerState<MascotPopup>
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.15),
+            color: Colors.black.withValues(alpha: 0.15),
             blurRadius: 20,
             offset: const Offset(0, -4),
           ),
@@ -115,7 +115,7 @@ class _MascotPopupState extends ConsumerState<MascotPopup>
           Container(
             width: 40, height: 4,
             decoration: BoxDecoration(
-              color: colorScheme.outline.withOpacity(0.3),
+              color: colorScheme.outline.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -136,7 +136,7 @@ class _MascotPopupState extends ConsumerState<MascotPopup>
             '$streak day streak',
             style: TextStyle(
                 fontSize: 14,
-                color: colorScheme.onSurface.withOpacity(0.5)),
+                color: colorScheme.onSurface.withValues(alpha: 0.5)),
           ).animate().fadeIn(delay: 200.ms),
 
           const SizedBox(height: 8),
@@ -173,10 +173,10 @@ class _MascotPopupState extends ConsumerState<MascotPopup>
             padding:
             const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
             decoration: BoxDecoration(
-              color: _occasionColor.withOpacity(0.12),
+              color: _occasionColor.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(16),
               border:
-              Border.all(color: _occasionColor.withOpacity(0.25)),
+              Border.all(color: _occasionColor.withValues(alpha: 0.25)),
             ),
             child: Text(
               _line,

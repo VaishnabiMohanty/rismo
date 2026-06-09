@@ -43,11 +43,11 @@ class AlarmTile extends StatelessWidget {
           decoration: BoxDecoration(
             color: isEnabled
                 ? colorScheme.primaryContainer
-                : colorScheme.surfaceVariant.withOpacity(0.5),
+                : colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: isEnabled
-                  ? colorScheme.primary.withOpacity(0.3)
+                  ? colorScheme.primary.withValues(alpha: 0.3)
                   : Colors.transparent,
             ),
           ),
@@ -66,7 +66,7 @@ class AlarmTile extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         color: isEnabled
                             ? colorScheme.onPrimaryContainer
-                            : colorScheme.onSurface.withOpacity(0.4),
+                            : colorScheme.onSurface.withValues(alpha: 0.4),
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -78,8 +78,8 @@ class AlarmTile extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 14,
                           color: isEnabled
-                              ? colorScheme.onPrimaryContainer.withOpacity(0.75)
-                              : colorScheme.onSurface.withOpacity(0.35),
+                              ? colorScheme.onPrimaryContainer.withValues(alpha: 0.75)
+                              : colorScheme.onSurface.withValues(alpha: 0.35),
                         ),
                       ),
 
@@ -93,7 +93,7 @@ class AlarmTile extends StatelessWidget {
                           size: 13,
                           color: isEnabled
                               ? colorScheme.primary
-                              : colorScheme.onSurface.withOpacity(0.3),
+                              : colorScheme.onSurface.withValues(alpha: 0.3),
                         ),
                         const SizedBox(width: 4),
                         Text(
@@ -102,7 +102,7 @@ class AlarmTile extends StatelessWidget {
                             fontSize: 12,
                             color: isEnabled
                                 ? colorScheme.primary
-                                : colorScheme.onSurface.withOpacity(0.3),
+                                : colorScheme.onSurface.withValues(alpha: 0.3),
                           ),
                         ),
                         if (alarm.streakCount > 0) ...[
@@ -122,7 +122,7 @@ class AlarmTile extends StatelessWidget {
               Switch(
                 value: isEnabled,
                 onChanged: onToggle,
-                activeColor: colorScheme.primary,
+                activeThumbColor: colorScheme.primary,
               ),
             ],
           ),

@@ -89,7 +89,7 @@ class _TimePickerWidgetState extends State<TimePickerWidget> {
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
-                          color: colorScheme.onBackground,
+                          color: colorScheme.onSurface,
                         ),
                       ),
                     ),
@@ -127,7 +127,7 @@ class _TimePickerWidgetState extends State<TimePickerWidget> {
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
-                          color: colorScheme.onBackground,
+                          color: colorScheme.onSurface,
                         ),
                       ),
                     ),

@@ -44,7 +44,7 @@ class RingingScreen extends ConsumerWidget {
                         color: Theme.of(context)
                             .colorScheme
                             .onPrimary
-                            .withOpacity(0.85),
+                            .withValues(alpha: 0.85),
                       ),
                     ).animate().fadeIn(delay: 300.ms),
                   ],
@@ -55,7 +55,7 @@ class RingingScreen extends ConsumerWidget {
               Icon(
                 Icons.alarm,
                 size: 120,
-                color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.9),
+                color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.9),
               )
                   .animate(onPlay: (c) => c.repeat())
                   .scale(
@@ -108,7 +108,7 @@ class RingingScreen extends ConsumerWidget {
                           color: Theme.of(context)
                               .colorScheme
                               .onPrimary
-                              .withOpacity(0.6),
+                              .withValues(alpha: 0.6),
                         ),
                         minimumSize: const Size(220, 50),
                         shape: RoundedRectangleBorder(

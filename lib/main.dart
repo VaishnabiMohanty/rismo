@@ -18,19 +18,19 @@ void main() async {
   tz.initializeTimeZones();
 
   // Initialize alarm manager — without this alarms never fire
-  var AndroidAlarmManager;
   await AndroidAlarmManager.initialize();
 
   await NotificationService.init();
-
-  // Request all permissions upfront including battery optimization
-  await PermissionService.requestAllPermissions();
 
   runApp(
     const ProviderScope(
       child: RismoApp(),
     ),
   );
+
+  // Request all permissions after app is running to prevent startup crashes
+  await PermissionService.requestAllPermissions();
+  await NotificationService.requestPermission();
 }
 
 class RismoApp extends ConsumerWidget {

@@ -95,8 +95,8 @@ class StatsScreen extends ConsumerWidget {
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context)
                       .colorScheme
-                      .onBackground
-                      .withOpacity(0.5),
+                      .onSurface
+                      .withValues(alpha: 0.5),
                 ),
               )
             else
@@ -141,9 +141,9 @@ class _StatCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withOpacity(0.3)),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -160,7 +160,7 @@ class _StatCard extends StatelessWidget {
             Text(
               unit,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: color.withOpacity(0.8),
+                color: color.withValues(alpha: 0.8),
               ),
             ),
             const SizedBox(height: 4),
@@ -169,8 +169,8 @@ class _StatCard extends StatelessWidget {
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: Theme.of(context)
                     .colorScheme
-                    .onBackground
-                    .withOpacity(0.6),
+                    .onSurface
+                    .withValues(alpha: 0.6),
               ),
             ),
           ],
@@ -195,7 +195,7 @@ class _MilestoneTile extends StatelessWidget {
       leading: CircleAvatar(
         radius: 18,
         backgroundColor:
-        achieved ? Colors.green : Colors.grey.withOpacity(0.2),
+        achieved ? Colors.green : Colors.grey.withValues(alpha: 0.2),
         child: Icon(
           achieved ? Icons.check : Icons.lock_outline,
           size: 16,
@@ -206,8 +206,8 @@ class _MilestoneTile extends StatelessWidget {
         '$milestone day streak',
         style: TextStyle(
           color: achieved
-              ? Theme.of(context).colorScheme.onBackground
-              : Theme.of(context).colorScheme.onBackground.withOpacity(0.4),
+              ? Theme.of(context).colorScheme.onSurface
+              : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
           fontWeight: achieved ? FontWeight.w500 : FontWeight.normal,
         ),
       ),

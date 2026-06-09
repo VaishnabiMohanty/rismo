@@ -19,8 +19,6 @@ Future<void> onAlarmFired(int id, Map<String, dynamic> params) async {
 }
 
 class AlarmService {
-  static get AndroidAlarmManager => null;
-
   // ── Schedule ─────────────────────────────────────────────────────────────────
 
   /// Schedules a one-time or repeating alarm
