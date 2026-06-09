@@ -9,6 +9,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "67.0.0"
+  alarm:
+    dependency: "direct main"
+    description:
+      name: alarm
+      sha256: "42345de0885ca17eeb6ced894ca6b29a8a4515f5fae1612e65f7891b0d7d7263"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.4.1"
   analyzer:
     dependency: transitive
     description:
@@ -17,14 +25,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.4.1"
-  android_alarm_manager_plus:
-    dependency: "direct main"
-    description:
-      name: android_alarm_manager_plus
-      sha256: "591b97ceaaa8db69776a32bc1ea2fed8f83c3dadfa7b7e95351abfc0894361e7"
-      url: "https://pub.dev"
-    source: hosted
-    version: "5.0.0"
   archive:
     dependency: transitive
     description:
@@ -257,6 +257,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.7+4"
+  equatable:
+    dependency: transitive
+    description:
+      name: equatable
+      sha256: "3e0141505477fd8ad55d6eb4e7776d3fe8430be8e497ccb1521370c3f21a3e2b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.8"
   fake_async:
     dependency: transitive
     description:
@@ -374,6 +382,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.4.1"
+  flutter_fgbg:
+    dependency: transitive
+    description:
+      name: flutter_fgbg
+      sha256: "8e6707b853f8c3b8d8688f28836f2d34754b9084252eb2a9903491289eb97ba9"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.8.0"
   flutter_lints:
     dependency: "direct dev"
     description:

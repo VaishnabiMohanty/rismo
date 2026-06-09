@@ -1,24 +1,23 @@
+import 'dart:async';
+import 'package:alarm/alarm.dart';
+import 'package:alarm/utils/alarm_set.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timezone/data/latest.dart' as tz;
-import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 
 import 'routes/app_router.dart';
 import 'theme/app_theme.dart';
 import 'providers/settings_provider.dart';
+import 'providers/alarm_provider.dart';
 import 'services/notification_service.dart';
 import 'services/permission_service.dart';
-
-// Must be top-level for alarm manager to call it
-@pragma('vm:entry-point')
-void alarmCallback() {}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   tz.initializeTimeZones();
 
-  // Initialize alarm manager — without this alarms never fire
-  await AndroidAlarmManager.initialize();
+  // Initialize the new alarm plugin
+  await Alarm.init();
 
   await NotificationService.init();
 
@@ -33,17 +32,54 @@ void main() async {
   await NotificationService.requestPermission();
 }
 
-class RismoApp extends ConsumerWidget {
+class RismoApp extends ConsumerStatefulWidget {
   const RismoApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final router = ref.watch(appRouterProvider);
+  ConsumerState<RismoApp> createState() => _RismoAppState();
+}
 
-    // Watch settings so theme updates LIVE when user changes it
+class _RismoAppState extends ConsumerState<RismoApp> {
+  late StreamSubscription<AlarmSet> _ringSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    // Listen for alarms ringing
+    _ringSubscription = Alarm.ringing.listen(_handleAlarmRing);
+  }
+
+  @override
+  void dispose() {
+    _ringSubscription.cancel();
+    super.dispose();
+  }
+
+  void _handleAlarmRing(AlarmSet set) async {
+    if (set.alarms.isEmpty) return;
+
+    // When an alarm rings, find the model and navigate to RingingScreen
+    // In v5, ringing emits the whole set of ringing alarms
+    final settings = set.alarms.first;
+    
+    final alarms = await ref.read(alarmProvider.future);
+    final alarm = alarms.firstWhere(
+      (a) => a.id.hashCode == settings.id,
+      orElse: () => alarms.first, // fallback
+    );
+
+    if (mounted) {
+      final router = ref.read(appRouterProvider);
+      // Only go to ringing if not already there (or check if it's a new alarm)
+      router.push('/ringing', extra: alarm);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final router = ref.watch(appRouterProvider);
     final settingsAsync = ref.watch(settingsProvider);
 
-    // Default to system while loading
     final themeMode = settingsAsync.when(
       data: (s) => s.themeMode,
       loading: () => ThemeMode.system,
@@ -53,12 +89,9 @@ class RismoApp extends ConsumerWidget {
     return MaterialApp.router(
       title: 'Rismo',
       debugShowCheckedModeBanner: false,
-
-      // Both themes provided — Flutter picks based on themeMode
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: themeMode, // ← reacts instantly when changed in settings
-
+      themeMode: themeMode,
       routerConfig: router,
     );
   }

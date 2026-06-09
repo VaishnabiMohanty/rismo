@@ -6,7 +6,7 @@ import '../models/alarm_model.dart';
 
 class NotificationService {
   static final FlutterLocalNotificationsPlugin _plugin =
-  FlutterLocalNotificationsPlugin();
+      FlutterLocalNotificationsPlugin();
 
   // ── Init ────────────────────────────────────────────────────────────────────
 
@@ -14,7 +14,7 @@ class NotificationService {
     tz_data.initializeTimeZones();
 
     const androidSettings =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('@mipmap/ic_launcher');
 
     const initSettings = InitializationSettings(
       android: androidSettings,
@@ -30,7 +30,7 @@ class NotificationService {
   static Future<void> requestPermission() async {
     await _plugin
         .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>()
+            AndroidFlutterLocalNotificationsPlugin>()
         ?.requestNotificationsPermission();
   }
 
@@ -43,22 +43,14 @@ class NotificationService {
     final androidDetails = AndroidNotificationDetails(
       'alarm_channel', // channel id
       'Alarms', // channel name
-      channelDescription: 'AlarMy alarm notifications',
+      channelDescription: 'Rismo alarm notifications',
       importance: Importance.max,
       priority: Priority.high,
       fullScreenIntent: true, // shows even on lock screen
-      sound: RawResourceAndroidNotificationSound(_getRawResourceName(alarm.soundPath)),
+      sound: RawResourceAndroidNotificationSound(
+          _getRawResourceName(alarm.soundPath)),
       playSound: true,
     );
-  }
-
-  static String _getRawResourceName(String assetPath) {
-    if (assetPath.contains('classic')) return 'mixkit_classic_alarm_995';
-    if (assetPath.contains('digital')) return 'mixkit_digital_alarm_buzzer_992';
-    if (assetPath.contains('morning')) return 'mixkit_morning_clock_alarm_1003';
-    if (assetPath.contains('rooster')) return 'mixkit_rooster_crowing_morning_2462';
-    return 'mixkit_classic_alarm_995'; // default
-  }
 
     await _plugin.zonedSchedule(
       id: alarm.id.hashCode,
@@ -71,6 +63,16 @@ class NotificationService {
           ? DateTimeComponents.dayOfWeekAndTime
           : null,
     );
+  }
+
+  static String _getRawResourceName(String assetPath) {
+    if (assetPath.contains('classic')) return 'mixkit_classic_alarm_995';
+    if (assetPath.contains('digital')) return 'mixkit_digital_alarm_buzzer_992';
+    if (assetPath.contains('morning')) return 'mixkit_morning_clock_alarm_1003';
+    if (assetPath.contains('rooster')) {
+      return 'mixkit_rooster_crowing_morning_2462';
+    }
+    return 'mixkit_classic_alarm_995'; // default
   }
 
   // ── Cancel ───────────────────────────────────────────────────────────────────
