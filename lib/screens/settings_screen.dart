@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../providers/settings_provider.dart';
 import '../utils/constants.dart';
+import '../widgets/persistent_mascot.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -17,99 +18,103 @@ class SettingsScreen extends ConsumerWidget {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Error: $e')),
         data: (settings) {
-          // Guard: ensure current sound value exists in items list
           final soundValue =
           AppConstants.alarmSounds.values.contains(settings.defaultSoundPath)
               ? settings.defaultSoundPath
               : AppConstants.alarmSounds.values.first;
 
-          return ListView(
+          return Stack(
             children: [
-              // ── Appearance ────────────────────────────────────────────────
-              const _SectionHeader(title: 'Appearance'),
-              ListTile(
-                leading: const Icon(Icons.dark_mode_outlined),
-                title: const Text('Theme'),
-                trailing: DropdownButton<ThemeMode>(
-                  value: settings.themeMode,
-                  underline: const SizedBox(),
-                  items: const [
-                    DropdownMenuItem(value: ThemeMode.system, child: Text('System')),
-                    DropdownMenuItem(value: ThemeMode.light,  child: Text('Light')),
-                    DropdownMenuItem(value: ThemeMode.dark,   child: Text('Dark')),
-                  ],
-                  onChanged: (val) =>
-                      ref.read(settingsProvider.notifier).setThemeMode(val!),
-                ),
+              ListView(
+                padding: const EdgeInsets.only(bottom: 100),
+                children: [
+                  const _SectionHeader(title: 'Appearance'),
+                  ListTile(
+                    leading: const Icon(Icons.dark_mode_outlined),
+                    title: const Text('Theme'),
+                    trailing: DropdownButton<ThemeMode>(
+                      value: settings.themeMode,
+                      underline: const SizedBox(),
+                      items: const [
+                        DropdownMenuItem(value: ThemeMode.system, child: Text('System')),
+                        DropdownMenuItem(value: ThemeMode.light, child: Text('Light')),
+                        DropdownMenuItem(value: ThemeMode.dark, child: Text('Dark')),
+                      ],
+                      onChanged: (val) =>
+                          ref.read(settingsProvider.notifier).setThemeMode(val!),
+                    ),
+                  ),
+
+                  const _SectionHeader(title: 'Clock'),
+                  SwitchListTile(
+                    secondary: const Icon(Icons.access_time),
+                    title: const Text('24-hour format'),
+                    subtitle: const Text('Show time as 14:30 instead of 2:30 PM'),
+                    value: settings.use24HourFormat,
+                    onChanged: (val) =>
+                        ref.read(settingsProvider.notifier).setTimeFormat(val),
+                  ),
+
+                  const _SectionHeader(title: 'Alarm Defaults'),
+                  ListTile(
+                    leading: const Icon(Icons.snooze),
+                    title: const Text('Default Snooze Duration'),
+                    trailing: DropdownButton<int>(
+                      value: settings.defaultSnoozeDuration,
+                      underline: const SizedBox(),
+                      items: AppConstants.snoozeOptions
+                          .map((min) => DropdownMenuItem(
+                        value: min,
+                        child: Text('$min min'),
+                      ))
+                          .toList(),
+                      onChanged: (val) =>
+                          ref.read(settingsProvider.notifier).setSnoozeDuration(val!),
+                    ),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.music_note_outlined),
+                    title: const Text('Default Alarm Sound'),
+                    trailing: DropdownButton<String>(
+                      value: soundValue,
+                      underline: const SizedBox(),
+                      items: AppConstants.alarmSounds.entries
+                          .map((e) => DropdownMenuItem(
+                        value: e.value,
+                        child: Text(e.key),
+                      ))
+                          .toList(),
+                      onChanged: (val) =>
+                          ref.read(settingsProvider.notifier).setDefaultSound(val!),
+                    ),
+                  ),
+
+                  const _SectionHeader(title: 'Profile'),
+                  ListTile(
+                    leading: const Icon(Icons.person_outline),
+                    title: const Text('Your Name'),
+                    subtitle: Text(
+                      settings.userName.isEmpty ? 'Not set' : settings.userName,
+                    ),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => _showNameDialog(context, ref, settings.userName),
+                  ),
+
+                  const _SectionHeader(title: 'About'),
+                  const ListTile(
+                    leading: Icon(Icons.info_outline),
+                    title: Text('App'),
+                    trailing: Text('Rismo v1.0.0',
+                        style: TextStyle(color: Colors.grey)),
+                  ),
+                ],
               ),
 
-              // ── Clock ──────────────────────────────────────────────────────
-              const _SectionHeader(title: 'Clock'),
-              SwitchListTile(
-                secondary: const Icon(Icons.access_time),
-                title: const Text('24-hour format'),
-                subtitle: const Text('Show time as 14:30 instead of 2:30 PM'),
-                value: settings.use24HourFormat,
-                onChanged: (val) =>
-                    ref.read(settingsProvider.notifier).setTimeFormat(val),
-              ),
-
-              // ── Alarm defaults ─────────────────────────────────────────────
-              const _SectionHeader(title: 'Alarm Defaults'),
-              ListTile(
-                leading: const Icon(Icons.snooze),
-                title: const Text('Default Snooze Duration'),
-                trailing: DropdownButton<int>(
-                  value: settings.defaultSnoozeDuration,
-                  underline: const SizedBox(),
-                  items: AppConstants.snoozeOptions
-                      .map((min) => DropdownMenuItem(
-                    value: min,
-                    child: Text('$min min'),
-                  ))
-                      .toList(),
-                  onChanged: (val) =>
-                      ref.read(settingsProvider.notifier).setSnoozeDuration(val!),
-                ),
-              ),
-
-              // ── Default sound — safe dropdown ──────────────────────────────
-              ListTile(
-                leading: const Icon(Icons.music_note_outlined),
-                title: const Text('Default Alarm Sound'),
-                trailing: DropdownButton<String>(
-                  value: soundValue, // ← always a valid value
-                  underline: const SizedBox(),
-                  items: AppConstants.alarmSounds.entries
-                      .map((e) => DropdownMenuItem(
-                    value: e.value,
-                    child: Text(e.key),
-                  ))
-                      .toList(),
-                  onChanged: (val) =>
-                      ref.read(settingsProvider.notifier).setDefaultSound(val!),
-                ),
-              ),
-
-              // ── Profile ────────────────────────────────────────────────────
-              const _SectionHeader(title: 'Profile'),
-              ListTile(
-                leading: const Icon(Icons.person_outline),
-                title: const Text('Your Name'),
-                subtitle: Text(
-                  settings.userName.isEmpty ? 'Not set' : settings.userName,
-                ),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => _showNameDialog(context, ref, settings.userName),
-              ),
-
-              // ── About ──────────────────────────────────────────────────────
-              const _SectionHeader(title: 'About'),
-              const ListTile(
-                leading: Icon(Icons.info_outline),
-                title: Text('App'),
-                trailing: Text('Rismo v1.0.0',
-                    style: TextStyle(color: Colors.grey)),
+              // ── Mascot ────────────────────────────────────────────────
+              const Positioned(
+                left: 0,
+                bottom: 16,
+                child: PersistentMascot(context: MascotContext.settings),
               ),
             ],
           );

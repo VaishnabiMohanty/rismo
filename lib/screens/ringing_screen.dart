@@ -8,6 +8,7 @@ import '../providers/alarm_provider.dart';
 import '../providers/streak_provider.dart';
 import '../services/alarm_service.dart';
 import '../providers/todo_provider.dart';
+import '../widgets/persistent_mascot.dart';
 
 class RingingScreen extends ConsumerWidget {
   final AlarmModel alarm;
@@ -16,132 +17,136 @@ class RingingScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark
-        ? const Color(0xFF0A1628)
-        : Theme.of(context).colorScheme.primary;
+    // Light but vivid — blue that shows color clearly in both modes
+    final bgGradient = isDark
+        ? const LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [Color(0xFF0D2563), Color(0xFF1A3A7A), Color(0xFF0D4D9A)],
+    )
+        : const LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [Color(0xFF1565C0), Color(0xFF2979FF), Color(0xFF0288D1)],
+    );
 
     return PopScope(
       canPop: false,
       child: Scaffold(
-        backgroundColor: bgColor,
-        body: SafeArea(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Spacer(flex: 2),
+        body: Container(
+          decoration: BoxDecoration(gradient: bgGradient),
+          child: SafeArea(
+            child: Stack(
+              children: [
+                // ── Main centered content ─────────────────────────────────
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Spacer(flex: 2),
 
-                  // ── Time ────────────────────────────────────────────────
-                  Text(
-                    alarm.timeLabelAmPm,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 80,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onPrimary,
-                      letterSpacing: -2,
+                        // Time
+                        Text(
+                          alarm.timeLabelAmPm,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 84,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            letterSpacing: -2,
+                          ),
+                        ).animate().fadeIn(duration: 600.ms).slideY(begin: -0.15),
+
+                        const SizedBox(height: 10),
+
+                        Text(
+                          alarm.label.isEmpty ? 'Wake up! ☀️' : alarm.label,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 22,
+                            color: Colors.white70,
+                          ),
+                        ).animate().fadeIn(delay: 300.ms),
+
+                        const Spacer(flex: 1),
+
+                        // Pulsing alarm icon
+                        const Icon(Icons.alarm_rounded,
+                            size: 100, color: Colors.white)
+                            .animate(onPlay: (c) => c.repeat())
+                            .scale(
+                          begin: const Offset(1, 1),
+                          end: const Offset(1.12, 1.12),
+                          duration: 700.ms,
+                          curve: Curves.easeInOut,
+                        )
+                            .then()
+                            .scale(
+                          begin: const Offset(1.12, 1.12),
+                          end: const Offset(1, 1),
+                          duration: 700.ms,
+                          curve: Curves.easeInOut,
+                        ),
+
+                        const Spacer(flex: 1),
+
+                        // Dismiss
+                        SizedBox(
+                          width: double.infinity,
+                          height: 58,
+                          child: ElevatedButton(
+                            onPressed: () => _dismiss(context, ref),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: const Color(0xFF1565C0),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(32)),
+                              elevation: 0,
+                            ),
+                            child: const Text('Dismiss',
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold)),
+                          ),
+                        ).animate().fadeIn(delay: 400.ms),
+
+                        const SizedBox(height: 14),
+
+                        // Snooze
+                        SizedBox(
+                          width: double.infinity,
+                          height: 52,
+                          child: OutlinedButton(
+                            onPressed: () => _snooze(context, ref),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              side: const BorderSide(
+                                  color: Colors.white54),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(32)),
+                            ),
+                            child: Text('Snooze ${alarm.snoozeDuration} min',
+                                style: const TextStyle(fontSize: 16)),
+                          ),
+                        ).animate().fadeIn(delay: 500.ms),
+
+                        const Spacer(flex: 2),
+                      ],
                     ),
-                  ).animate().fadeIn(duration: 600.ms).slideY(begin: -0.2),
-
-                  const SizedBox(height: 12),
-
-                  Text(
-                    alarm.label.isEmpty ? 'Wake up! ☀️' : alarm.label,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 22,
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onPrimary
-                          .withValues(alpha: 0.85),
-                    ),
-                  ).animate().fadeIn(delay: 300.ms),
-
-                  const Spacer(flex: 1),
-
-                  // ── Pulsing alarm icon ──────────────────────────────────
-                  Icon(
-                    Icons.alarm_rounded,
-                    size: 110,
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onPrimary
-                        .withValues(alpha: 0.9),
-                  )
-                      .animate(onPlay: (c) => c.repeat())
-                      .scale(
-                    begin: const Offset(1, 1),
-                    end: const Offset(1.15, 1.15),
-                    duration: 800.ms,
-                    curve: Curves.easeInOut,
-                  )
-                      .then()
-                      .scale(
-                    begin: const Offset(1.15, 1.15),
-                    end: const Offset(1, 1),
-                    duration: 800.ms,
-                    curve: Curves.easeInOut,
                   ),
+                ),
 
-                  const Spacer(flex: 1),
-
-                  // ── Dismiss ─────────────────────────────────────────────
-                  SizedBox(
-                    width: double.infinity,
-                    height: 58,
-                    child: ElevatedButton(
-                      onPressed: () => _dismiss(context, ref),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                        Theme.of(context).colorScheme.onPrimary,
-                        foregroundColor:
-                        Theme.of(context).colorScheme.primary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(32),
-                        ),
-                      ),
-                      child: const Text(
-                        'Dismiss',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ).animate().fadeIn(delay: 400.ms),
-
-                  const SizedBox(height: 16),
-
-                  // ── Snooze ──────────────────────────────────────────────
-                  SizedBox(
-                    width: double.infinity,
-                    height: 52,
-                    child: OutlinedButton(
-                      onPressed: () => _snooze(context, ref),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor:
-                        Theme.of(context).colorScheme.onPrimary,
-                        side: BorderSide(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onPrimary
-                              .withValues(alpha: 0.6),
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(32),
-                        ),
-                      ),
-                      child: Text(
-                        'Snooze ${alarm.snoozeDuration} min',
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ),
-                  ).animate().fadeIn(delay: 500.ms),
-
-                  const Spacer(flex: 2),
-                ],
-              ),
+                // ── Mascot bottom-left ────────────────────────────────────
+                const Positioned(
+                  left: 0,
+                  bottom: 24,
+                  child: PersistentMascot(
+                    context: MascotContext.ringing,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -153,14 +158,10 @@ class RingingScreen extends ConsumerWidget {
     await AlarmService.dismissAlarm(alarm);
     await ref.read(streakNotifierProvider.notifier).recordWake();
     await ref.read(alarmProvider.notifier).incrementStreak(alarm.id);
-
     if (context.mounted) {
-      // Navigate home, then show today's todo sheet
       context.go('/');
       Future.delayed(const Duration(milliseconds: 400), () {
-        if (context.mounted) {
-          _showTodayTasks(context, ref);
-        }
+        if (context.mounted) _showTodayTasks(context, ref);
       });
     }
   }
@@ -180,7 +181,6 @@ class RingingScreen extends ConsumerWidget {
   }
 }
 
-// ── Today Tasks bottom sheet shown after dismissing alarm ────────────────────
 class _TodayTasksSheet extends ConsumerWidget {
   final String alarmId;
   const _TodayTasksSheet({required this.alarmId});
@@ -197,15 +197,16 @@ class _TodayTasksSheet extends ConsumerWidget {
       builder: (_, controller) => Container(
         decoration: BoxDecoration(
           color: cs.surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+          borderRadius:
+          const BorderRadius.vertical(top: Radius.circular(28)),
         ),
         child: Column(
           children: [
-            // Handle
             Padding(
               padding: const EdgeInsets.only(top: 12, bottom: 8),
               child: Container(
-                width: 40, height: 4,
+                width: 40,
+                height: 4,
                 decoration: BoxDecoration(
                   color: cs.outline.withValues(alpha: 0.4),
                   borderRadius: BorderRadius.circular(2),
@@ -213,17 +214,17 @@ class _TodayTasksSheet extends ConsumerWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+              padding:
+              const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
               child: Row(
                 children: [
                   Icon(Icons.checklist_rounded, color: cs.primary),
                   const SizedBox(width: 10),
-                  Text(
-                    "Today's Tasks",
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  Text("Today's Tasks",
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium
+                          ?.copyWith(fontWeight: FontWeight.bold)),
                   const Spacer(),
                   TextButton.icon(
                     onPressed: () => Navigator.pop(context),
@@ -236,35 +237,26 @@ class _TodayTasksSheet extends ConsumerWidget {
             const Divider(height: 1),
             Expanded(
               child: tasksAsync.when(
-                loading: () => const Center(child: CircularProgressIndicator()),
+                loading: () =>
+                const Center(child: CircularProgressIndicator()),
                 error: (e, _) => Center(child: Text('Error: $e')),
                 data: (tasks) {
                   if (tasks.isEmpty) {
                     return Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.inbox_rounded,
-                              size: 48,
-                              color: cs.onSurface.withValues(alpha: 0.2)),
-                          const SizedBox(height: 12),
-                          Text('No tasks for today',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(
-                                color: cs.onSurface.withValues(alpha: 0.4),
-                              )),
-                        ],
-                      ),
+                      child: Text('No tasks for today',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(
+                              color: cs.onSurface
+                                  .withValues(alpha: 0.4))),
                     );
                   }
-                  return ListView.separated(
+                  return ListView.builder(
                     controller: controller,
                     padding: const EdgeInsets.symmetric(
                         horizontal: 20, vertical: 12),
                     itemCount: tasks.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 8),
                     itemBuilder: (_, i) {
                       final task = tasks[i];
                       return _TaskTile(
@@ -297,7 +289,9 @@ class _TaskTile extends StatelessWidget {
       onTap: onToggle,
       borderRadius: BorderRadius.circular(14),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        margin: const EdgeInsets.only(bottom: 8),
+        padding:
+        const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
           color: task.isDone
               ? cs.primary.withValues(alpha: 0.08)
@@ -315,22 +309,33 @@ class _TaskTile extends StatelessWidget {
               task.isDone
                   ? Icons.check_circle_rounded
                   : Icons.radio_button_unchecked_rounded,
-              color: task.isDone ? cs.primary : cs.onSurface.withValues(alpha: 0.4),
+              color: task.isDone
+                  ? cs.primary
+                  : cs.onSurface.withValues(alpha: 0.4),
               size: 22,
             ),
             const SizedBox(width: 14),
             Expanded(
-              child: Text(
-                task.title,
-                style: TextStyle(
-                  fontSize: 15,
-                  decoration:
-                  task.isDone ? TextDecoration.lineThrough : null,
-                  color: task.isDone
-                      ? cs.onSurface.withValues(alpha: 0.45)
-                      : cs.onSurface,
-                  fontWeight: FontWeight.w500,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(task.title,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        decoration: task.isDone
+                            ? TextDecoration.lineThrough
+                            : null,
+                        color: task.isDone
+                            ? cs.onSurface.withValues(alpha: 0.4)
+                            : cs.onSurface,
+                      )),
+                  if (task.timeLabel != null)
+                    Text(task.timeLabel!,
+                        style: TextStyle(
+                            fontSize: 12,
+                            color: cs.primary.withValues(alpha: 0.8))),
+                ],
               ),
             ),
           ],
