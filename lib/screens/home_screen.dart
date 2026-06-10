@@ -22,7 +22,7 @@ class HomeScreen extends ConsumerWidget {
     final showMascot   = ref.watch(showMascotProvider);
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: const Text('Rismo',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
@@ -129,8 +129,8 @@ class _EmptyStateWithRobot extends StatelessWidget {
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
             color: Theme.of(context)
                 .colorScheme
-                .onBackground
-                .withOpacity(0.5),
+                .onSurface
+                .withValues(alpha: 0.5),
           ),
         ),
         const SizedBox(height: 8),
@@ -139,8 +139,8 @@ class _EmptyStateWithRobot extends StatelessWidget {
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
             color: Theme.of(context)
                 .colorScheme
-                .onBackground
-                .withOpacity(0.35),
+                .onSurface
+                .withValues(alpha: 0.35),
           ),
         ),
       ],

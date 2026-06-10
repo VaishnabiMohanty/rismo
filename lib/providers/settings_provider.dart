@@ -45,6 +45,9 @@ class SettingsNotifier extends AsyncNotifier<AppSettings> {
     final prefs = await SharedPreferences.getInstance();
 
     final themeModeIndex = prefs.getInt(AppConstants.keyThemeMode) ?? 0;
+    final themeMode = themeModeIndex < ThemeMode.values.length
+        ? ThemeMode.values[themeModeIndex]
+        : ThemeMode.system;
 
     // Validate saved sound path — if it doesn't exist in current sounds, reset it
     final savedSound = prefs.getString(AppConstants.keyDefaultSound);
@@ -53,7 +56,7 @@ class SettingsNotifier extends AsyncNotifier<AppSettings> {
         : AppConstants.alarmSounds.values.first; // always falls back to first real file
 
     return AppSettings(
-      themeMode: ThemeMode.values[themeModeIndex],
+      themeMode: themeMode,
       defaultSnoozeDuration: prefs.getInt(AppConstants.keySnoozeDuration) ?? 5,
       defaultSoundPath: validSound,
       use24HourFormat: prefs.getBool(AppConstants.keyUse24h) ?? false,

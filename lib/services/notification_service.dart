@@ -6,7 +6,7 @@ import '../models/alarm_model.dart';
 
 class NotificationService {
   static final FlutterLocalNotificationsPlugin _plugin =
-  FlutterLocalNotificationsPlugin();
+      FlutterLocalNotificationsPlugin();
 
   // ── Init ────────────────────────────────────────────────────────────────────
 
@@ -14,7 +14,7 @@ class NotificationService {
     tz_data.initializeTimeZones();
 
     const androidSettings =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('@mipmap/ic_launcher');
 
     const initSettings = InitializationSettings(
       android: androidSettings,
@@ -24,11 +24,13 @@ class NotificationService {
       settings: initSettings,
       onDidReceiveNotificationResponse: _onNotificationTapped,
     );
+  }
 
-    // Request notification permission (Android 13+)
+  /// Request notification permission (Android 13+)
+  static Future<void> requestPermission() async {
     await _plugin
         .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>()
+            AndroidFlutterLocalNotificationsPlugin>()
         ?.requestNotificationsPermission();
   }
 
@@ -41,16 +43,12 @@ class NotificationService {
     final androidDetails = AndroidNotificationDetails(
       'alarm_channel', // channel id
       'Alarms', // channel name
-      channelDescription: 'AlarMy alarm notifications',
+      channelDescription: 'Rismo alarm notifications',
       importance: Importance.max,
       priority: Priority.high,
       fullScreenIntent: true, // shows even on lock screen
       sound: RawResourceAndroidNotificationSound(
-        alarm.soundPath
-            .replaceAll('assets/sounds/', '')
-            .replaceAll('.mp3', '')
-            .replaceAll('-', '_'),
-      ),
+          _getRawResourceName(alarm.soundPath)),
       playSound: true,
     );
 
@@ -65,6 +63,16 @@ class NotificationService {
           ? DateTimeComponents.dayOfWeekAndTime
           : null,
     );
+  }
+
+  static String _getRawResourceName(String assetPath) {
+    if (assetPath.contains('classic')) return 'mixkit_classic_alarm_995';
+    if (assetPath.contains('digital')) return 'mixkit_digital_alarm_buzzer_992';
+    if (assetPath.contains('morning')) return 'mixkit_morning_clock_alarm_1003';
+    if (assetPath.contains('rooster')) {
+      return 'mixkit_rooster_crowing_morning_2462';
+    }
+    return 'mixkit_classic_alarm_995'; // default
   }
 
   // ── Cancel ───────────────────────────────────────────────────────────────────

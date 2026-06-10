@@ -22,7 +22,7 @@ class StreakBadge extends StatelessWidget {
         gradient: LinearGradient(
           colors: currentStreak > 0
               ? [Colors.orange.shade400, Colors.deepOrange.shade500]
-              : [colorScheme.surfaceVariant, colorScheme.surfaceVariant],
+              : [colorScheme.surfaceContainerHighest, colorScheme.surfaceContainerHighest],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -39,7 +39,7 @@ class StreakBadge extends StatelessWidget {
             onPlay: (c) => currentStreak > 0 ? c.repeat() : null,
           )
               .then(delay: 1200.ms)
-              .shimmer(duration: 800.ms, color: Colors.yellow.withOpacity(0.6)),
+              .shimmer(duration: 800.ms, color: Colors.yellow.withValues(alpha: 0.6)),
 
           const SizedBox(width: 16),
 
@@ -68,8 +68,8 @@ class StreakBadge extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 13,
                     color: currentStreak > 0
-                        ? Colors.white.withOpacity(0.8)
-                        : colorScheme.onSurfaceVariant.withOpacity(0.6),
+                        ? Colors.white.withValues(alpha: 0.8)
+                        : colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
                   ),
                 ),
               ],
@@ -116,7 +116,7 @@ class _NextMilestone extends StatelessWidget {
           daysLeft == 1 ? 'day to\nnext 🏆' : 'days to\nnext 🏆',
           style: TextStyle(
             fontSize: 10,
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.white.withValues(alpha: 0.8),
           ),
           textAlign: TextAlign.center,
         ),

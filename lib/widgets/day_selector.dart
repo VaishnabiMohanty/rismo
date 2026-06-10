@@ -74,11 +74,11 @@ class _DaySelectorState extends State<DaySelector> {
                   shape: BoxShape.circle,
                   color: isSelected
                       ? colorScheme.primary
-                      : colorScheme.surfaceVariant,
+                      : colorScheme.surfaceContainerHighest,
                   border: Border.all(
                     color: isSelected
                         ? colorScheme.primary
-                        : colorScheme.outline.withOpacity(0.3),
+                        : colorScheme.outline.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Center(
@@ -118,7 +118,7 @@ class _DaySelectorState extends State<DaySelector> {
               .join(', '),
           style: TextStyle(
             fontSize: 12,
-            color: colorScheme.onBackground.withOpacity(0.55),
+            color: colorScheme.onSurface.withValues(alpha: 0.55),
           ),
         ),
       ],

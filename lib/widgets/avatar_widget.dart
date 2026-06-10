@@ -50,7 +50,7 @@ class AvatarWidget extends StatelessWidget {
                   color: colorScheme.primary,
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: colorScheme.background,
+                    color: colorScheme.onSurface,
                     width: 2,
                   ),
                 ),

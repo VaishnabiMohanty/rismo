@@ -104,7 +104,7 @@ class ProfileScreen extends ConsumerWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
-            tileColor: Theme.of(context).colorScheme.surfaceVariant,
+            tileColor: Theme.of(context).colorScheme.surfaceContainerHighest,
             leading: const Icon(Icons.bar_chart),
             title: const Text('View Full Stats'),
             trailing: const Icon(Icons.chevron_right),
@@ -116,7 +116,7 @@ class ProfileScreen extends ConsumerWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
-              tileColor: Colors.red.withOpacity(0.08),
+              tileColor: Colors.red.withValues(alpha: 0.08),
               leading: const Icon(Icons.delete_outline, color: Colors.red),
               title: const Text(
                 'Remove Photo',
@@ -199,8 +199,8 @@ class _ProfileStat extends StatelessWidget {
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
             color: Theme.of(context)
                 .colorScheme
-                .onBackground
-                .withOpacity(0.55),
+                .onSurface
+                .withValues(alpha: 0.55),
           ),
           textAlign: TextAlign.center,
         ),

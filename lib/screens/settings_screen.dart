@@ -26,7 +26,7 @@ class SettingsScreen extends ConsumerWidget {
           return ListView(
             children: [
               // ── Appearance ────────────────────────────────────────────────
-              _SectionHeader(title: 'Appearance'),
+              const _SectionHeader(title: 'Appearance'),
               ListTile(
                 leading: const Icon(Icons.dark_mode_outlined),
                 title: const Text('Theme'),
@@ -44,7 +44,7 @@ class SettingsScreen extends ConsumerWidget {
               ),
 
               // ── Clock ──────────────────────────────────────────────────────
-              _SectionHeader(title: 'Clock'),
+              const _SectionHeader(title: 'Clock'),
               SwitchListTile(
                 secondary: const Icon(Icons.access_time),
                 title: const Text('24-hour format'),
@@ -55,7 +55,7 @@ class SettingsScreen extends ConsumerWidget {
               ),
 
               // ── Alarm defaults ─────────────────────────────────────────────
-              _SectionHeader(title: 'Alarm Defaults'),
+              const _SectionHeader(title: 'Alarm Defaults'),
               ListTile(
                 leading: const Icon(Icons.snooze),
                 title: const Text('Default Snooze Duration'),
@@ -92,7 +92,7 @@ class SettingsScreen extends ConsumerWidget {
               ),
 
               // ── Profile ────────────────────────────────────────────────────
-              _SectionHeader(title: 'Profile'),
+              const _SectionHeader(title: 'Profile'),
               ListTile(
                 leading: const Icon(Icons.person_outline),
                 title: const Text('Your Name'),
@@ -104,7 +104,7 @@ class SettingsScreen extends ConsumerWidget {
               ),
 
               // ── About ──────────────────────────────────────────────────────
-              _SectionHeader(title: 'About'),
+              const _SectionHeader(title: 'About'),
               const ListTile(
                 leading: Icon(Icons.info_outline),
                 title: Text('App'),

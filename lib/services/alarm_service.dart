@@ -1,29 +1,11 @@
-import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
-import 'package:flutter/material.dart';
-
+import 'package:alarm/alarm.dart';
 import '../models/alarm_model.dart';
 import 'notification_service.dart';
-import 'audio_service.dart';
-
-// Top-level function — required by android_alarm_manager_plus
-// Must be outside any class and annotated with @pragma
-@pragma('vm:entry-point')
-Future<void> onAlarmFired(int id, Map<String, dynamic> params) async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  // Play alarm sound
-  await AudioService.playAlarm(params['soundPath'] as String);
-
-  // Show notification on lock screen
-  await NotificationService.init();
-}
 
 class AlarmService {
-  static get AndroidAlarmManager => null;
-
   // ── Schedule ─────────────────────────────────────────────────────────────────
 
-  /// Schedules a one-time or repeating alarm
+  /// Schedules an alarm using the modern alarm plugin
   static Future<void> scheduleAlarm(AlarmModel alarm) async {
     final now = DateTime.now();
     var alarmTime = DateTime(
@@ -39,32 +21,28 @@ class AlarmService {
       alarmTime = alarmTime.add(const Duration(days: 1));
     }
 
-    if (alarm.isRepeating) {
-      // Repeating alarm — fires every week on selected days
-      await AndroidAlarmManager.periodic(
-        const Duration(days: 7),
-        alarm.id.hashCode,
-        onAlarmFired,
-        startAt: alarmTime,
-        exact: true,
-        wakeup: true, // wakes device from sleep
-        rescheduleOnReboot: true, // survives phone restart
-        params: {'soundPath': alarm.soundPath},
-      );
-    } else {
-      // One-time alarm
-      await AndroidAlarmManager.oneShotAt(
-        alarmTime,
-        alarm.id.hashCode,
-        onAlarmFired,
-        exact: true,
-        wakeup: true,
-        rescheduleOnReboot: true,
-        params: {'soundPath': alarm.soundPath},
-      );
-    }
+    final alarmSettings = AlarmSettings(
+      id: alarm.id.hashCode,
+      dateTime: alarmTime,
+      assetAudioPath: alarm.soundPath,
+      notificationSettings: NotificationSettings(
+        title: 'Rismo ⏰',
+        body: alarm.label.isEmpty ? 'Time to wake up!' : alarm.label,
+        stopButton: 'Dismiss',
+      ),
+      volumeSettings: VolumeSettings.fade(
+        volume: 0.5,
+        fadeDuration: const Duration(seconds: 30),
+      ),
+      loopAudio: true,
+      vibrate: true,
+      androidFullScreenIntent: true,
+    );
 
-    // Also schedule the visible notification
+    await Alarm.set(alarmSettings: alarmSettings);
+
+    // We still keep the local notification for the "Next Alarm" status 
+    // and manual cancellation if needed, though 'alarm' handles the ringing.
     await NotificationService.scheduleAlarmNotification(alarm);
   }
 
@@ -72,7 +50,7 @@ class AlarmService {
 
   /// Cancels both the alarm trigger and its notification
   static Future<void> cancelAlarm(AlarmModel alarm) async {
-    await AndroidAlarmManager.cancel(alarm.id.hashCode);
+    await Alarm.stop(alarm.id.hashCode);
     await NotificationService.cancelAlarmNotification(alarm.id);
   }
 
@@ -80,10 +58,9 @@ class AlarmService {
 
   /// Cancels current alarm and reschedules after snooze duration
   static Future<void> snoozeAlarm(AlarmModel alarm) async {
-    // Cancel the currently ringing alarm
-    await cancelAlarm(alarm);
+    await Alarm.stop(alarm.id.hashCode);
+    await NotificationService.cancelAlarmNotification(alarm.id);
 
-    // Schedule a new one-shot alarm after snooze duration
     final snoozeTime = DateTime.now().add(
       Duration(minutes: alarm.snoozeDuration),
     );
@@ -94,15 +71,25 @@ class AlarmService {
       repeatDays: '', // snooze is always one-time
     );
 
-    await AndroidAlarmManager.oneShotAt(
-      snoozeTime,
-      alarm.id.hashCode,
-      onAlarmFired,
-      exact: true,
-      wakeup: true,
-      params: {'soundPath': alarm.soundPath},
+    final snoozeSettings = AlarmSettings(
+      id: alarm.id.hashCode,
+      dateTime: snoozeTime,
+      assetAudioPath: alarm.soundPath,
+      notificationSettings: NotificationSettings(
+        title: 'Rismo (Snoozed) ⏰',
+        body: alarm.label.isEmpty ? 'Time to wake up!' : alarm.label,
+        stopButton: 'Dismiss',
+      ),
+      volumeSettings: VolumeSettings.fade(
+        volume: 0.5,
+        fadeDuration: const Duration(seconds: 30),
+      ),
+      loopAudio: true,
+      vibrate: true,
+      androidFullScreenIntent: true,
     );
 
+    await Alarm.set(alarmSettings: snoozeSettings);
     await NotificationService.scheduleAlarmNotification(snoozedAlarm);
   }
 
@@ -110,7 +97,7 @@ class AlarmService {
 
   /// Stops the alarm sound and cancels notification
   static Future<void> dismissAlarm(AlarmModel alarm) async {
-    await AudioService.stopAlarm();
+    await Alarm.stop(alarm.id.hashCode);
     await NotificationService.cancelAlarmNotification(alarm.id);
 
     // If repeating, reschedule for next occurrence automatically
