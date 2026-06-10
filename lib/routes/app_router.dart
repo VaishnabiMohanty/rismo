@@ -9,6 +9,9 @@ import '../screens/ringing_screen.dart';
 import '../screens/stats_screen.dart';
 import '../screens/settings_screen.dart';
 import '../screens/profile_screen.dart';
+import '../screens/stopwatch_screen.dart';
+import '../screens/timezone_screen.dart';
+import '../screens/todo_screen.dart';
 
 // Riverpod provider so any widget can access the router
 final appRouterProvider = Provider<GoRouter>((ref) {
@@ -65,6 +68,24 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/profile',
         name: 'profile',
         builder: (context, state) => const ProfileScreen(),
+      ),
+
+      GoRoute(
+        path: '/stopwatch',
+        name: 'stopwatch',
+        builder: (context, state) => const StopwatchScreen(),
+      ),
+
+      GoRoute(
+        path: '/timezone',
+        name: 'timezone',
+        builder: (context, state) => const TimezoneScreen(),
+      ),
+
+      GoRoute(
+        path: '/todo',
+        name: 'todo',
+        builder: (context, state) => const TodoScreen(),
       ),
     ],
 

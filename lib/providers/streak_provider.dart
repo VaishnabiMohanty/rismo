@@ -123,11 +123,8 @@ class StreakNotifier extends AsyncNotifier<StreakState> {
   // ── Mascot trigger ───────────────────────────────────────────────────────────
 
   void _checkMascotTrigger(int streak) {
-    // Show mascot on these milestone streaks
-    const milestones = [1, 3, 5, 7, 14, 21, 30, 50, 100];
-    if (milestones.contains(streak)) {
-      ref.read(showMascotProvider.notifier).state = true;
-    }
+    // Always show mascot when waking — robot should say something every time
+    ref.read(showMascotProvider.notifier).state = true;
   }
 
   // ── Helper ───────────────────────────────────────────────────────────────────

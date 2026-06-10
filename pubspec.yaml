@@ -1,64 +1,64 @@
-  name: rismo
-  description: A smart alarm clock app
-  publish_to: none
-  version: 1.0.0+1
+name: rismo
+description: A smart alarm clock app
+publish_to: none
+version: 1.0.0+1
 
-  environment:
-    sdk: '>=3.0.0 <4.0.0'
+environment:
+  sdk: '>=3.0.0 <4.0.0'
 
-  dependencies:
-    flutter:
-      sdk: flutter
-
-    # Alarm & notifications
-    flutter_local_notifications: ^22.0.0
-    alarm: ^5.4.1
-    timezone:                    ^0.11.0
-
-    # State management
-    flutter_riverpod:            ^2.6.1
-
-    # Local database
-    floor:                       ^1.5.0
-    sqflite:                     ^2.4.1
-
-    # Audio
-    just_audio:                  ^0.9.38
-
-    # Permissions
-    permission_handler:          ^12.0.3
-
-    # Storage / prefs
-    shared_preferences:          ^2.2.3
-
-    # Navigation
-    go_router:                   ^13.2.0
-
-    # Avatar / image
-    image_picker:                ^1.1.2
-    cached_network_image:        ^3.3.1
-    flutter_cache_manager:       ^3.3.1
-    path_provider:               ^2.1.3
-    path:                        ^1.9.0
-
-    # Mascot & animations
-    lottie:                      ^3.3.3
-    flutter_animate:             ^4.5.0
-
-    # Utilities
-    intl:                        ^0.19.0
-    uuid:                        ^4.4.0
-
-  dev_dependencies:
-    flutter_test:
-      sdk: flutter
-    flutter_lints:               ^4.0.0
-    floor_generator:             ^1.5.0
-    build_runner:                ^2.4.9
-
+dependencies:
   flutter:
-    uses-material-design: true
-    assets:
-      - assets/sounds/
-      - assets/images/
-      - assets/animations/
+    sdk: flutter
+
+  # Alarm & notifications
+  flutter_local_notifications: ^22.0.0
+  alarm: ^5.4.1
+  timezone: ^0.11.0
+
+  # State management
+  flutter_riverpod: ^2.6.1
+
+  # Local database
+  floor: ^1.5.0
+  sqflite: ^2.4.1
+
+  # Audio
+  just_audio: ^0.9.38
+
+  # Permissions
+  permission_handler: ^12.0.3
+
+  # Storage / prefs
+  shared_preferences: ^2.2.3
+
+  # Navigation
+  go_router: ^13.2.0
+
+  # Avatar / image
+  image_picker: ^1.1.2
+  cached_network_image: ^3.3.1
+  flutter_cache_manager: ^3.3.1
+  path_provider: ^2.1.3
+  path: ^1.9.0
+
+  # Mascot & animations
+  lottie: ^3.3.3
+  flutter_animate: ^4.5.0
+
+  # Utilities
+  intl: ^0.19.0
+  uuid: ^4.4.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  floor_generator: ^1.5.0
+  build_runner: ^2.4.9
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/sounds/
+    - assets/images/
+    - assets/animations/
