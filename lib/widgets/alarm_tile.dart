@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../models/alarm_model.dart';
+import '../utils/time_utils.dart';
 
 class AlarmTile extends StatelessWidget {
   final AlarmModel alarm;
   final ValueChanged<bool> onToggle;
   final VoidCallback onTap;
   final VoidCallback onDelete;
+  final bool use24h;
 
   const AlarmTile({
     super.key,
@@ -15,12 +17,16 @@ class AlarmTile extends StatelessWidget {
     required this.onToggle,
     required this.onTap,
     required this.onDelete,
+    this.use24h = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final isEnabled = alarm.isEnabled;
     final colorScheme = Theme.of(context).colorScheme;
+
+    // Respect the user's time format setting
+    final timeDisplay = TimeUtils.format(alarm.hour, alarm.minute, use24h: use24h);
 
     return Dismissible(
       key: Key(alarm.id),
@@ -53,14 +59,14 @@ class AlarmTile extends StatelessWidget {
           ),
           child: Row(
             children: [
-              // ── Left: time & label ─────────────────────────────────────────
+              // ── Left: time & label ───────────────────────────────────────
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Time
+                    // Time — now respects 24h format
                     Text(
-                      alarm.timeLabelAmPm,
+                      timeDisplay,
                       style: TextStyle(
                         fontSize: 36,
                         fontWeight: FontWeight.bold,
@@ -118,7 +124,7 @@ class AlarmTile extends StatelessWidget {
                 ),
               ),
 
-              // ── Right: toggle ──────────────────────────────────────────────
+              // ── Right: toggle ────────────────────────────────────────────
               Switch(
                 value: isEnabled,
                 onChanged: onToggle,
